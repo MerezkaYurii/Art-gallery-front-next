@@ -10,3 +10,7 @@
 body {
   background-color: #fafafa;
 }
+img {
+  margin: 0;
+  padding: 0;
+}
