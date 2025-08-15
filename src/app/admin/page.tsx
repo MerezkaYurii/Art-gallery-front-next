@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-// import LoftModalAdmin from '../components/LoftModalAdmin';
+import LoftModalAdmin from '../components/LoftModalAdmin';
 
 export default function AdminPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +24,10 @@ export default function AdminPage() {
       <div className="flex flex-col items-center  mt-20 gap-4 p-10 w-[400px] bg-gray-100 rounded-xl shadow-lg">
         {!isAuthorized && (
           <div className="flex flex-col items-center gap-2 w-full">
-            <label className="font-bold text-gray-900">Password:</label>
+            <label className="font-bold text-gray-900">Пароль/Password:</label>
             <input
               type="password"
-              placeholder="Enter password"
+              placeholder="Введіть пароль/Enter password"
               className="p-2 border rounded-md w-full mb-4"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -37,7 +37,7 @@ export default function AdminPage() {
               onClick={handlePasswordSubmit}
               className="bg-gray-700 text-white font-bold px-4 py-2 rounded-md hover:bg-blue-700 w-full"
             >
-              Continue
+              Продовжити/Continue
             </button>
           </div>
         )}
@@ -45,12 +45,12 @@ export default function AdminPage() {
         {isAuthorized && (
           <>
             <button
-              className="bg-gray-700 text-white font-bold p-2 rounded-xl hover:bg-blue-700 px-20"
+              className="bg-gray-700 text-white font-bold p-2 rounded-xl hover:bg-blue-700 px-10"
               onClick={() => setIsOpen(true)}
             >
-              Add loft
+              Додати картину/Add painting
             </button>
-            {/* {isOpen && <LoftModalAdmin onClose={() => setIsOpen(false)} />} */}
+            {isOpen && <LoftModalAdmin onClose={() => setIsOpen(false)} />}
           </>
         )}
       </div>

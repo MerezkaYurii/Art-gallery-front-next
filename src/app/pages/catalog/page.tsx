@@ -1,7 +1,9 @@
 import React from 'react';
+import { getArtCatalog } from '~/app/api/api';
+import CatalogPage from '~/app/components/CatalogPage';
 
-type Props = {};
+export default async function PhotoGalleryPage() {
+  const items = await getArtCatalog();
 
-export default function page({}: Props) {
-  return <div>pageCatalog</div>;
+  return <CatalogPage items={items} />;
 }
