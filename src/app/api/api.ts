@@ -8,7 +8,7 @@ if (!API_URL) {
 }
 
 export const getArtCatalog = async () => {
-  const res = await fetch(`${API_URL}/api/catalog`, {
+  const res = await fetch(`${API_URL}/catalog`, {
     method: 'GET',
     next: { revalidate: 0 },
   });
@@ -21,17 +21,22 @@ export const getArtCatalog = async () => {
 
   const json = await res.json();
 
-  if (!Array.isArray(json.data)) {
-    console.error('❌ ОШИБКА: Ожидался массив, но получено:', json.data);
-    return [];
+  if (!json.data || !Array.isArray(json.data.data)) {
+    return {
+      data: [],
+      page: 1,
+      perPage: 10,
+      totalItems: 0,
+      totalPages: 0,
+    };
   }
 
-  // return json.data;
-  return Array.isArray(json.data) ? json.data : [json.data];
+  return json.data;
 };
 
+//!!!!!!!!!!!!
 export const getArtCatalogById = async (id: string) => {
-  const res = await fetch(`${API_URL}/api/catalog/${id}`, {
+  const res = await fetch(`${API_URL}/catalog/${id}`, {
     method: 'GET',
   });
 

@@ -86,7 +86,7 @@ export default function LoftModalAdmin({ onClose }: { onClose: () => void }) {
   const uploadToCloudinary = async (blob: Blob): Promise<string> => {
     const data = new FormData();
     data.append('file', blob);
-    data.append('upload_preset', 'your_upload_preset'); // ← заміни на свій
+    data.append('upload_preset', 'preview_upload'); // ← заміни на свій
     const res = await fetch(
       'https://api.cloudinary.com/v1_1/dwrfm4vpz/image/upload',
       {
@@ -126,7 +126,7 @@ export default function LoftModalAdmin({ onClose }: { onClose: () => void }) {
       };
 
       //????????????????????????????????????????????????????
-      const response = await fetch(`${API_URL}/api/catalog`, {
+      const response = await fetch(`${API_URL}/catalog`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

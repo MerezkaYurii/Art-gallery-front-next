@@ -10,13 +10,13 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
-    { href: '/pages/aboutMe', labelUk: 'Про мене', labelEn: 'About me' },
-    { href: '/pages/catalog', labelUk: 'Каталог', labelEn: 'Catalog' },
-    { href: '/pages/gallery', labelUk: 'Галерея', labelEn: 'Gallery' },
+    { href: '/aboutMe', labelUk: 'Про мене', labelEn: 'About me' },
+    { href: '/catalog', labelUk: 'Каталог', labelEn: 'Catalog' },
+    { href: '/gallery', labelUk: 'Галерея', labelEn: 'Gallery' },
   ];
 
   return (
-    <header className="max-w-7xl mx-auto relative w-full h-20 sm:h-24 md:h-28 top-0 z-50 bg-gradient-to-r from-gray-500 via-white to-gray-500  mb-4">
+    <header className="max-w-7xl mx-auto relative w-full h-20 sm:h-24 md:h-28 top-0 z-50 bg-gradient-to-r from-gray-500 via-white to-gray-500 ">
       <div className="absolute left-0 top-0 h-full w-auto aspect-[2/1]">
         <Image
           src="/header_left.png"

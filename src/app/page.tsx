@@ -41,7 +41,7 @@ export default function Home() {
         >
           {/* Левая иконка - слева от текста на десктопе */}
           <Link
-            href="/pages/catalog"
+            href="/catalog"
             className="h-[70px] w-[100px] sm:h-[100px] sm:w-[200px] md:h-[200px] md:w-[300px] shrink-0 hover:drop-shadow-[3px_3px_3px_black]"
           >
             <svg
@@ -55,7 +55,7 @@ export default function Home() {
 
           {/* Правая иконка - справа от текста на десктопе */}
           <Link
-            href="/pages/gallery"
+            href="/gallery"
             className="h-[70px] w-[100px] sm:h-[100px] sm:w-[200px] md:h-[200px] md:w-[300px] shrink-0 hover:drop-shadow-[3px_3px_3px_black]"
           >
             <svg

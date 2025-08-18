@@ -9,12 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.3",
+    "@react-three/fiber": "^9.3.0",
+    "@react-three/rapier": "^2.1.0",
     "next": "15.4.6",
     "piexifjs": "^1.0.6",
     "prettier": "^3.6.2",
     "react": "19.1.0",
+    "react-aframe-ar": "^1.18.0",
     "react-dom": "19.1.0",
-    "react-spinners": "^0.17.0"
+    "react-spinners": "^0.17.0",
+    "three": "^0.179.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

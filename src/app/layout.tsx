@@ -2,6 +2,7 @@ import React from 'react';
 import './globals.css';
 import Header from './components/Header';
 import { Metadata } from 'next';
+import KeyboardManager from './components/KeyboardManager';
 
 export const metadata: Metadata = {
   title: 'Art Gallery',
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body>
         <Header />
         {children}
+        <KeyboardManager />
       </body>
     </html>
   );

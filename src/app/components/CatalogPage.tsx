@@ -13,7 +13,13 @@ export type CatalogItem = {
 };
 
 type CatalogPageProps = {
-  items: CatalogItem[];
+  items: {
+    data: CatalogItem[];
+    page: number;
+    perPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
 };
 
 export default function CatalogPage({ items }: CatalogPageProps) {
@@ -23,22 +29,26 @@ export default function CatalogPage({ items }: CatalogPageProps) {
     setVisibleItems((prev) => prev + 6); // 👈 шаг загрузки — 6
   };
 
-  const visibleData = items.slice(0, visibleItems);
+  const visibleData = items.data.slice(0, visibleItems);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="max-w-7xl mx-auto px-6 py-12  bg-gray-300">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  ">
         {visibleData.map((item) => (
           <Link href={`/catalog/${item._id}`} key={item._id}>
-            <div key={item._id}>
+            <div
+              key={item._id}
+              className="w-[300px] overflow-hidden rounded-xl shadow-md  bg-gray-800 "
+            >
               <Image
                 src={item.thumbnail}
                 alt={item.title}
                 width={300}
-                className="w-full h-48 object-cover"
+                height={500}
+                className="w-full h-[500px] object-cover"
               />
               <div className="p-4">
-                <h2 className="text-xl text-gray-300 font-bold mb-2">
+                <h2 className="text-xl text-gray-200 font-bold mb-2">
                   {item.title}
                 </h2>
               </div>
@@ -48,7 +58,7 @@ export default function CatalogPage({ items }: CatalogPageProps) {
       </div>
 
       {/* Кнопка загрузки, только если есть ещё элементы */}
-      {visibleItems < items.length && (
+      {visibleItems < items.data.length && (
         <div className="flex justify-center mt-8">
           <button
             onClick={handleLoadMore}
