@@ -14,24 +14,29 @@ export default function ImageModal({ url, onClose }: ImageModalProps) {
       onClick={onClose}
       style={{
         position: 'fixed',
-        top: 0,
+        top: 5,
         left: 0,
         width: '100vw',
         height: '100vh',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 9999,
         cursor: 'pointer',
+        overflow: 'auto',
+        padding: '2rem',
       }}
     >
       <Image
         src={url}
         alt="Artwork"
+        width={600}
+        height={0}
         style={{
-          maxWidth: '80%',
-          maxHeight: '80%',
+          objectFit: 'cover',
+          height: 'auto',
+
           boxShadow: '0 0 20px white',
         }}
       />

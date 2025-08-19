@@ -1,8 +1,7 @@
 import React from 'react';
-
 import { RigidBody } from '@react-three/rapier';
 import { Box } from '@react-three/drei';
-import { Picture } from './Picture';
+import Picture from './Picture';
 
 function WallsAndFloor() {
   return (

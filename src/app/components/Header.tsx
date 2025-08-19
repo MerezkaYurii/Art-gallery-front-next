@@ -35,6 +35,15 @@ export default function Header() {
         />
       </div>
 
+      <div className="absolute bottom-2 left-4 z-50">
+        <Link
+          href="/admin"
+          className="bg-transparent text-white text-xs sm:text-sm font-normal border border-white px-2 sm:px-4 py-0.5 sm:py-1 rounded-md shadow-none cursor-default  opacity-30"
+        >
+          Admin
+        </Link>
+      </div>
+
       <div className="absolute inset-0 flex items-center justify-center">
         <nav className="hidden sm:flex  lg:flex gap-6 mx-auto font-bold text-center whitespace-nowrap transition-all duration-300">
           <ul

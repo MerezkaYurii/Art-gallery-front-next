@@ -21,9 +21,13 @@ const mapKey = (key: string) => {
   }
 };
 
-export default function Player() {
+type PlayerProps = {
+  modalOpen: boolean;
+  controlsRef: React.MutableRefObject<any>;
+};
+
+export default function Player({ modalOpen, controlsRef }: PlayerProps) {
   const bodyRef = useRef<any>(null);
-  const controlsRef = useRef<any>(null);
   const { camera } = useThree();
   const speed = 5;
 
@@ -61,7 +65,7 @@ export default function Player() {
   useFrame(() => {
     const body = bodyRef.current;
     const controls = controlsRef.current;
-    if (!body || !controls) return;
+    if (!body || !controls || modalOpen) return;
 
     const cam = controls.getObject();
     cam.rotation.x = 0;
@@ -87,7 +91,8 @@ export default function Player() {
 
   return (
     <>
-      <PointerLockControls ref={controlsRef} />
+      {/* ВАЖНО: используем ref из пропсов */}
+      <PointerLockControls ref={controlsRef} enabled={!modalOpen} />
       <RigidBody
         ref={bodyRef}
         colliders={false}
