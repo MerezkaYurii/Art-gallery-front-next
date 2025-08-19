@@ -7,11 +7,14 @@ if (!API_URL) {
   throw new Error('API_URL is undefined.');
 }
 
-export const getArtCatalog = async () => {
-  const res = await fetch(`${API_URL}/catalog`, {
-    method: 'GET',
-    next: { revalidate: 0 },
-  });
+export const getArtCatalog = async (page = 1, perPage = 8) => {
+  const res = await fetch(
+    `${API_URL}/catalog?page=${page}&perPage=${perPage}`,
+    {
+      method: 'GET',
+      next: { revalidate: 0 },
+    },
+  );
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -25,7 +28,7 @@ export const getArtCatalog = async () => {
     return {
       data: [],
       page: 1,
-      perPage: 10,
+      perPage: 8,
       totalItems: 0,
       totalPages: 0,
     };

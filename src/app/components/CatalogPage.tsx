@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getArtCatalog } from '../api/api';
 
 export type CatalogItem = {
   _id: string;
@@ -12,33 +13,56 @@ export type CatalogItem = {
   thumbnail: string;
 };
 
-type CatalogPageProps = {
-  items: {
-    data: CatalogItem[];
-    page: number;
-    perPage: number;
-    totalItems: number;
-    totalPages: number;
-  };
-};
+// type CatalogPageProps = {
+//   items: {
+//     data: CatalogItem[];
+//     page: number;
+//     perPage: number;
+//     totalItems: number;
+//     totalPages: number;
+//   };
+// };
+const PER_PAGE = 8;
+export default function CatalogPage() {
+  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-export default function CatalogPage({ items }: CatalogPageProps) {
-  const [visibleItems, setVisibleItems] = useState(6); // 👈 показываем 6 сначала
+  const loadPage = async (pageToLoad: number) => {
+    setLoading(true);
+    try {
+      const res = await getArtCatalog(pageToLoad, PER_PAGE);
+      setItems((prev) => [...prev, ...res.data]);
+      setPage(res.page);
+      setHasNextPage(res.hasNextPage); // получено с бэка
+    } catch (err) {
+      console.error('Ошибка загрузки каталога:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPage(1); // Первая загрузка
+  }, []);
 
   const handleLoadMore = () => {
-    setVisibleItems((prev) => prev + 6); // 👈 шаг загрузки — 6
+    if (!loading && hasNextPage) {
+      loadPage(page + 1);
+    }
   };
 
-  const visibleData = items.data.slice(0, visibleItems);
+  // const visibleData = items.data.slice(0, visibleItems);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12  bg-gray-300">
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  ">
-        {visibleData.map((item) => (
+        {items.map((item) => (
           <Link href={`/catalog/${item._id}`} key={item._id}>
             <div
               key={item._id}
-              className="w-[300px] overflow-hidden rounded-xl shadow-md  bg-gray-800 "
+              className="w-[300px] h-[600px] overflow-hidden rounded-xl shadow-md  bg-gray-800 "
             >
               <Image
                 src={item.thumbnail}
@@ -58,13 +82,13 @@ export default function CatalogPage({ items }: CatalogPageProps) {
       </div>
 
       {/* Кнопка загрузки, только если есть ещё элементы */}
-      {visibleItems < items.data.length && (
+      {hasNextPage && (
         <div className="flex justify-center mt-8">
           <button
             onClick={handleLoadMore}
             className="bg-blue-800 text-white font-bold px-6 py-2 rounded-xl hover:bg-gray-700 transition"
           >
-            Завантажити більше/Load More
+            {loading ? 'Завантаження...' : 'Завантажити більше / Load More'}
           </button>
         </div>
       )}

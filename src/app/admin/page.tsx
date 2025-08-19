@@ -7,6 +7,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const correctPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
@@ -25,13 +26,25 @@ export default function AdminPage() {
         {!isAuthorized && (
           <div className="flex flex-col items-center gap-2 w-full">
             <label className="font-bold text-gray-900">Пароль/Password:</label>
-            <input
-              type="password"
-              placeholder="Введіть пароль/Enter password"
-              className="p-2 border rounded-md w-full mb-4"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+
+            <div className="relative w-full mb-4">
+              <input
+                type={showPassword ? 'text' : 'password'} // переключение 👁
+                placeholder="Введіть пароль / Enter password"
+                className="p-2 pr-10 border rounded-md w-full"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+                onClick={() => setShowPassword((prev) => !prev)}
+                tabIndex={-1}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <button
               onClick={handlePasswordSubmit}

@@ -53,14 +53,6 @@ export default function LoftModalAdmin({ onClose }: { onClose: () => void }) {
         canvas.height = height;
         ctx.drawImage(img, 0, 0, width, height);
 
-        // canvas.toBlob(
-        //   (blob) => {
-        //     if (blob) resolve(blob);
-        //     else reject('Could not create thumbnail blob');
-        //   },
-        //   'image/jpeg',
-        //   0.7,
-        // );
         const base64data = canvas.toDataURL('image/jpeg', 0.7);
         const base64WithDPI = set72DPI(base64data);
         const base64ToBlob = (base64: string): Blob => {
@@ -121,7 +113,7 @@ export default function LoftModalAdmin({ onClose }: { onClose: () => void }) {
 
       const payload = {
         title: formData.title,
-        description: formData.description,
+        description: formData.description || '',
         thumbnail: thumbnailUrl,
       };
 
