@@ -88,7 +88,9 @@ export default function CatalogPage() {
             onClick={handleLoadMore}
             className="bg-blue-800 text-white font-bold px-6 py-2 rounded-xl hover:bg-gray-700 transition"
           >
-            {loading ? 'Завантаження...' : 'Завантажити більше / Load More'}
+            {loading
+              ? 'Завантаження/Loading...'
+              : 'Завантажити більше / Load More'}
           </button>
         </div>
       )}

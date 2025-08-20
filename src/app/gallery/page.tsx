@@ -27,7 +27,7 @@ export default function GalleryPage() {
     <div style={{ height: '100vh', width: '100vw' }} onClick={handleClick}>
       <Canvas
         camera={{ position: [0, 2, 5], fov: 75 }}
-        onClick={handleCanvasClick} // <--- именно здесь
+        onClick={handleCanvasClick}
       >
         <ambientLight />
         <pointLight position={[10, 10, 10]} />

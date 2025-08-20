@@ -29,7 +29,7 @@ type PlayerProps = {
 export default function Player({ modalOpen, controlsRef }: PlayerProps) {
   const bodyRef = useRef<any>(null);
   const { camera } = useThree();
-  const speed = 5;
+  const speed = 4;
 
   const [keys, setKeys] = useState({
     forward: false,
@@ -68,9 +68,21 @@ export default function Player({ modalOpen, controlsRef }: PlayerProps) {
     if (!body || !controls || modalOpen) return;
 
     const cam = controls.getObject();
-    cam.rotation.x = 0;
-    cam.rotation.z = 0;
 
+    // Извлечь текущий кватернион камеры
+    const quat = cam.quaternion;
+
+    // Преобразовать кватернион в Эйлер для извлечения yaw
+    const euler = new THREE.Euler().setFromQuaternion(quat, 'YXZ');
+
+    // Сохраняем yaw (вращение вокруг Y)
+    const yaw = euler.y;
+
+    // Создаем новый Эйлер с yaw, и 0 для pitch и roll
+    const newEuler = new THREE.Euler(0, yaw, 0, 'YXZ');
+
+    // Устанавливаем кватернион камеры из нового Эйлера
+    cam.quaternion.setFromEuler(newEuler);
     // Движение
     const velocity = new THREE.Vector3();
 
