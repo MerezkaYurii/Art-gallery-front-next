@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-[#333333]">
         <Header />
         {children}
         <KeyboardManager />

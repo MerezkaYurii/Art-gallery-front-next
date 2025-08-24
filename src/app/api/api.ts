@@ -9,7 +9,7 @@ if (!API_URL) {
 
 export const getArtCatalog = async (page = 1, perPage = 8) => {
   const res = await fetch(
-    `${API_URL}/catalog?page=${page}&perPage=${perPage}`,
+    `${API_URL}/catalog?page=${page}&perPage=${perPage}&sortBy=createdAt&sortOrder=desc`,
     {
       method: 'GET',
       next: { revalidate: 0 },
