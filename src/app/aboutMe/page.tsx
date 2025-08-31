@@ -53,31 +53,31 @@ export default function AboutPage() {
             <p className="mb-1">
               Telegram:{' '}
               <a
-                href="https://t.me/Yurii"
+                href="https://t.me/SvetlanaAuditskayte"
                 target="_blank"
                 className="underline hover:text-white"
               >
-                t.me/Yurii
+                t.me/SvetlanaAuditskayte
               </a>
             </p>
             <p className="mb-1">
               Facebook:{' '}
               <a
-                href="https://www.facebook.com/kros/"
+                href="https://www.facebook.com/tochinskaja.sweta"
                 target="_blank"
                 className="underline hover:text-white"
               >
-                facebook.com/kros
+                Светлана Аудицкайте
               </a>
             </p>
             <p className="mb-1">
-              L?????????????:{' '}
+              Instagram:{' '}
               <a
-                href="https://linkedin.com/in/yurii"
+                href="https://www.instagram.com/auditskayte?igsh=ejF2ZmN4bzFhZDVj"
                 target="_blank"
                 className="underline hover:text-white"
               >
-                linkedin.com/in/yurii
+                www.instagram.com/auditskayte
               </a>
             </p>
             <p>

@@ -10,6 +10,12 @@
 body {
   background-color: #fafafa;
 }
+
+body,
+canvas {
+  cursor: auto !important; /* или default */
+}
+
 img {
   margin: 0;
   padding: 0;

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Art Gallery',
   description: 'Описание сайта',
   icons: {
-    icon: '/LOGOtop.svg',
+    icon: '/pictureForHead.jpg',
   },
 };
 

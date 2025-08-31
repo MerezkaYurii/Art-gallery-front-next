@@ -1,12 +1,25 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+  useState,
+} from 'react';
 import { RigidBody, CapsuleCollider } from '@react-three/rapier';
 import { useFrame, useThree } from '@react-three/fiber';
 import { PointerLockControls } from '@react-three/drei';
-import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 
-const mapKey = (key: string) => {
+type MovementKeys = {
+  forward: boolean;
+  backward: boolean;
+  left: boolean;
+  right: boolean;
+};
+
+const mapKey = (key: string): keyof MovementKeys | '' => {
   switch (key.toLowerCase()) {
     case 'w':
       return 'forward';
@@ -21,100 +34,119 @@ const mapKey = (key: string) => {
   }
 };
 
-type PlayerProps = {
-  modalOpen: boolean;
-  controlsRef: React.MutableRefObject<any>;
+export type PlayerRef = {
+  lock: () => void;
+  unlock: () => void;
+  getObject: () => THREE.Object3D | undefined;
 };
 
-export default function Player({ modalOpen, controlsRef }: PlayerProps) {
-  const bodyRef = useRef<any>(null);
-  const { camera } = useThree();
-  const speed = 4;
+// type PlayerProps = {
+//   modalOpen: boolean;
+// };
 
-  const [keys, setKeys] = useState({
-    forward: false,
-    backward: false,
-    left: false,
-    right: false,
-  });
+const Player = forwardRef<PlayerRef, { modalOpen: boolean }>(
+  ({ modalOpen }, ref) => {
+    const bodyRef = useRef<any>(null);
+    const controlsRef = useRef<any>(null);
+    const { camera } = useThree();
+    const speed = 4;
 
-  // Обработка клавиш
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const mapped = mapKey(e.key);
-      if (mapped) {
-        setKeys((prev) => ({ ...prev, [mapped]: true }));
+    const [keys, setKeys] = useState<MovementKeys>({
+      forward: false,
+      backward: false,
+      left: false,
+      right: false,
+    });
+
+    useImperativeHandle(ref, () => ({
+      lock: () => controlsRef.current?.lock?.(),
+      unlock: () => controlsRef.current?.unlock?.(),
+      getObject: () => controlsRef.current?.getObject?.(),
+    }));
+
+    // Слушаем нажатия клавиш
+    useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        const mapped = mapKey(e.key);
+        if (mapped) setKeys((k) => ({ ...k, [mapped]: true }));
+      };
+      const handleKeyUp = (e: KeyboardEvent) => {
+        const mapped = mapKey(e.key);
+        if (mapped) setKeys((k) => ({ ...k, [mapped]: false }));
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('keyup', handleKeyUp);
+
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('keyup', handleKeyUp);
+      };
+    }, []);
+
+    useFrame(() => {
+      if (modalOpen) return;
+
+      const body = bodyRef.current;
+      const controls = controlsRef.current;
+      if (!body || !controls) return;
+
+      const camObject = controls.getObject();
+      if (!camObject) return;
+
+      // Получаем yaw (вращение вокруг Y)
+      const euler = new THREE.Euler().setFromQuaternion(
+        camObject.quaternion,
+        'YXZ',
+      );
+      const yaw = euler.y;
+
+      // Обнуляем pitch и roll — оставляем только yaw
+      camObject.quaternion.setFromEuler(new THREE.Euler(0, yaw, 0, 'YXZ'));
+
+      // Вычисляем направление движения
+      const velocity = new THREE.Vector3();
+      if (keys.forward) velocity.z -= 1;
+      if (keys.backward) velocity.z += 1;
+      // if (keys.left) velocity.x -= 1;
+      // if (keys.right) velocity.x += 1;
+
+      velocity.normalize().multiplyScalar(speed);
+
+      const direction = velocity.applyQuaternion(camera.quaternion);
+      body.setLinvel({ x: direction.x, y: 0, z: direction.z }, true);
+
+      const rotationSpeed = 0.03;
+      if (keys.left) {
+        camObject.rotation.y += rotationSpeed;
       }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      const mapped = mapKey(e.key);
-      if (mapped) {
-        setKeys((prev) => ({ ...prev, [mapped]: false }));
+      if (keys.right) {
+        camObject.rotation.y -= rotationSpeed;
       }
-    };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+      // Обновляем позицию камеры над телом
+      const pos = body.translation();
+      camera.position.set(pos.x, 1.7, pos.z);
+    });
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
+    return (
+      <>
+        <PointerLockControls ref={controlsRef} enabled={!modalOpen} />
+        <RigidBody
+          ref={bodyRef}
+          colliders={false}
+          mass={1}
+          type="dynamic"
+          position={[0, 1.7, 0]}
+          enabledRotations={[false, false, false]}
+        >
+          <CapsuleCollider args={[0.5, 1]} />
+        </RigidBody>
+      </>
+    );
+  },
+);
 
-  useFrame(() => {
-    const body = bodyRef.current;
-    const controls = controlsRef.current;
-    if (!body || !controls || modalOpen) return;
+Player.displayName = 'Player';
 
-    const cam = controls.getObject();
-
-    // Извлечь текущий кватернион камеры
-    const quat = cam.quaternion;
-
-    // Преобразовать кватернион в Эйлер для извлечения yaw
-    const euler = new THREE.Euler().setFromQuaternion(quat, 'YXZ');
-
-    // Сохраняем yaw (вращение вокруг Y)
-    const yaw = euler.y;
-
-    // Создаем новый Эйлер с yaw, и 0 для pitch и roll
-    const newEuler = new THREE.Euler(0, yaw, 0, 'YXZ');
-
-    // Устанавливаем кватернион камеры из нового Эйлера
-    cam.quaternion.setFromEuler(newEuler);
-    // Движение
-    const velocity = new THREE.Vector3();
-
-    if (keys.forward) velocity.z -= 1;
-    if (keys.backward) velocity.z += 1;
-    if (keys.left) velocity.x -= 1;
-    if (keys.right) velocity.x += 1;
-
-    velocity.normalize().multiplyScalar(speed);
-
-    const direction = velocity.applyQuaternion(camera.quaternion);
-    body.setLinvel({ x: direction.x, y: 0, z: direction.z }, true);
-
-    // Позиция камеры
-    const pos = body.translation();
-    camera.position.set(pos.x, 1.7, pos.z); // поднята камера чуть выше тела
-  });
-
-  return (
-    <>
-      {/* ВАЖНО: используем ref из пропсов */}
-      <PointerLockControls ref={controlsRef} enabled={!modalOpen} />
-      <RigidBody
-        ref={bodyRef}
-        colliders={false}
-        mass={1}
-        type="dynamic"
-        position={[0, 1.7, 0]}
-        enabledRotations={[false, false, false]}
-      >
-        <CapsuleCollider args={[0.5, 1]} />
-      </RigidBody>
-    </>
-  );
-}
+export default Player;

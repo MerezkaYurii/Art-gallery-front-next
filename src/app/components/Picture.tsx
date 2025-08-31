@@ -1,50 +1,14 @@
-// 'use client';
-
-// import { useTexture } from '@react-three/drei';
-// import * as THREE from 'three';
-// import { useRef } from 'react';
-
-// type PictureProps = {
-//   url: string;
-//   position: [number, number, number];
-//   size: [number, number];
-//   rotation?: [number, number, number];
-//   onSelectImage: (url: string) => void;
-// };
-
-// export default function Picture({
-//   url,
-//   position,
-//   size,
-//   rotation = [0, 0, 0],
-//   onSelectImage,
-// }: PictureProps) {
-//   const meshRef = useRef<THREE.Mesh>(null!);
-//   const texture = useTexture(url);
-
-//   // Обработка клика
-//   const handleClick = () => {
-//     onSelectImage(url);
-//   };
-
-//   return (
-//     <mesh
-//       ref={meshRef}
-//       position={position}
-//       rotation={rotation}
-//       onClick={handleClick}
-//     >
-//       <planeGeometry args={size} />
-//       <meshStandardMaterial map={texture} side={THREE.DoubleSide} />
-//     </mesh>
-//   );
-// }
-
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
-import { useRef, Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
+
+export interface PlayerRef {
+  lock: () => void;
+  unlock: () => void;
+}
 
 type PictureProps = {
   url: string;
@@ -52,6 +16,7 @@ type PictureProps = {
   size: [number, number];
   rotation?: [number, number, number];
   onSelectImage: (url: string) => void;
+  playerRef: React.RefObject<PlayerRef>;
 };
 
 function PictureInner({
@@ -60,16 +25,36 @@ function PictureInner({
   size,
   rotation = [0, 0, 0],
   onSelectImage,
+  playerRef,
 }: PictureProps) {
-  const meshRef = useRef<THREE.Mesh>(null!);
   const texture = useTexture(url);
+  const [hovered, setHovered] = useState(false);
+
+  const setCursor = (value: string) => {
+    const canvas = document.querySelector('canvas');
+    if (canvas) canvas.style.cursor = value;
+  };
 
   return (
     <mesh
-      ref={meshRef}
       position={position}
       rotation={rotation}
-      onClick={() => onSelectImage(url)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelectImage(url);
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+        setCursor('pointer');
+        playerRef.current?.unlock?.();
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation();
+        setHovered(false);
+        setCursor('auto');
+        playerRef.current?.lock?.();
+      }}
     >
       <planeGeometry args={size} />
       <meshStandardMaterial map={texture} side={THREE.DoubleSide} />

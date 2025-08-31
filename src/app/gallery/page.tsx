@@ -1,51 +1,58 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Canvas } from '@react-three/fiber';
-import { Physics } from '@react-three/rapier';
-import Player from '../components/Player';
-import { useRef, useState } from 'react';
-import ImageModal from '../components/ImageModal';
-import GalleryRoom from '../components/GalleryRoom';
 
-export default function GalleryPage() {
-  const [activeImage, setActiveImage] = useState<string | null>(null);
-  const controlsRef = useRef<any>(null);
+import React, { useEffect, useRef } from 'react';
 
-  const handleCanvasClick = () => {
-    if (controlsRef.current) {
-      controlsRef.current.lock(); // <--- активирует pointer lock
-    }
-  };
-
-  const handleClick = () => {
-    if (!activeImage && controlsRef.current) {
-      controlsRef.current.lock();
-    }
-  };
+export default function FullscreenVideo() {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const video = videoRef.current;
+  useEffect(() => {
+    return () => {
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    };
+  }, [video]);
 
   return (
-    <div style={{ height: '100vh', width: '100vw' }} onClick={handleClick}>
-      <Canvas
-        camera={{ position: [0, 2, 5], fov: 75 }}
-        onClick={handleCanvasClick}
-      >
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <Physics gravity={[0, -9.81, 0]}>
-          <GalleryRoom onSelectImage={setActiveImage} />
-          <Player modalOpen={!!activeImage} controlsRef={controlsRef} />
-        </Physics>
-      </Canvas>
+    <div className="video-container">
+      <video
+        ref={videoRef}
+        src="/gallery.mp4"
+        autoPlay
+        loop
+        playsInline
+        controls
+        className="video"
+      />
+      <style jsx>{`
+        .video-container {
+          display: flex;
+          justify-content: center; /* центрируем по горизонтали */
+          align-items: center; /* центрируем по вертикали */
+          min-height: 100vh; /* на весь экран */
+          overflow-y: auto; /* если по высоте не влезает */
+        }
 
-      {activeImage && (
-        <ImageModal
-          url={activeImage}
-          onClose={() => {
-            setActiveImage(null);
-            if (controlsRef.current) controlsRef.current.lock();
-          }}
-        />
-      )}
+        .video {
+          width: 50vw; /* по умолчанию для ПК */
+          height: auto;
+        }
+
+        /* для планшетов */
+        @media (max-width: 1024px) {
+          .video {
+            width: 80vw;
+          }
+        }
+
+        /* для телефонов */
+        @media (max-width: 768px) {
+          .video {
+            width: 100vw;
+          }
+        }
+      `}</style>
     </div>
   );
 }
